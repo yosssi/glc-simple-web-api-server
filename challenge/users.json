@@ -1,0 +1,36 @@
+[
+    {
+        "domain": "topcoder.com",
+        "users": [
+        {
+                "username": "takumi",
+                "password": "ilovego"
+            },
+    {
+                "username": "teru",
+                "password": "ilovejava"
+            },
+            {
+                "username": "toshi",
+                "password": "iloveapex"
+            }
+        ]
+    },
+    {
+        "domain": "appirio.com",
+        "users": [
+            {
+                "username": "jun",
+                "password": "ilovetopcoder"
+            },
+            {
+                "username": "narinder",
+                "password": "ilovesamurai"
+            },
+            {
+                "username": "chris",
+                "password": "ilovesushi"
+            }
+        ]
+    }
+]
