@@ -61,6 +61,11 @@ func handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if contentTypes := r.Header["Content-Type"]; len(contentTypes) != 1 || contentTypes[0] != "application/x-www-form-urlencoded" {
+		http.NotFound(w, r)
+		return
+	}
+
 	tokens := strings.Split(r.URL.String(), "/")
 
 	if len(tokens) != 6 || tokens[5] != "proxyauth" {
