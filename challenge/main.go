@@ -5,7 +5,9 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -23,6 +25,8 @@ type Auth struct {
 
 var auths []Auth
 
+var port = "80"
+
 func init() {
 	b, err := ioutil.ReadFile("users.json")
 
@@ -38,6 +42,10 @@ func init() {
 		for i, user := range auth.Users {
 			auth.Users[i].Password = encode(user.Password)
 		}
+	}
+
+	if len(os.Args) > 1 {
+		port = os.Args[1]
 	}
 }
 
@@ -90,13 +98,35 @@ func handle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !userExists {
-		w.WriteHeader(http.StatusOK)
+		respond(w, false, "denied by policy")
+		return
 	}
 
+	respond(w, true, "")
+}
+
+func respond(w http.ResponseWriter, accessGranted bool, reason string) {
+	m := map[string]interface{}{
+		"access_granted": accessGranted,
+	}
+
+	if reason != "" {
+		m["reason"] = reason
+	}
+
+	b, err := json.Marshal(m)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
+	w.Write(b)
 }
 
 func main() {
 	http.HandleFunc("/api/2/domains/", handle)
-	http.ListenAndServe(":8080", nil)
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
